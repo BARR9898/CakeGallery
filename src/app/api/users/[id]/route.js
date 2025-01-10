@@ -7,10 +7,15 @@ export async function PUT(request, { params }) {
     const { id } = await params; // Obtenemos el ID del usuario desde los parámetros de la URL
     const data = await request.json(); // Obtenemos los datos del cuerpo de la solicitud
 
+    
+
     let updateData = {
         username: data.username, // Actualizamos el username
         phone: data.phone, // Actualizamos el teléfono
     };
+
+    console.log('PUT user updateData',updateData);
+
 
     try {
         // Si se proporciona una nueva contraseña, encriptarla

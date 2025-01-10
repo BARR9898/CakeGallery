@@ -5,35 +5,34 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import React from "react";
 
-function EditUser({ params, datUser }) {
-  const { id } = React.use(params); // Aquí desenvuelves params para acceder a sus propiedades
+function EditUser({ params }) {
+  const { id } = params; // Aquí puedes acceder a los parámetros directamente desde `params` 
   const router = useRouter();
-  const [user, setUser] = useState(datUser || null); // Usa los datos de 'datUser' si están disponibles
+  const [user, setUser] = useState(null); // Estado para almacenar los datos del usuario
   const { register, handleSubmit, setValue } = useForm();
 
-  console.log('datUser', datUser);
-
   useEffect(() => {
-    if (id && !user) {
-      // Solo hace el fetch si 'id' está presente y 'user' aún no está cargado
-      fetch(`/api/users/${id}`)
+    if (id) {
+      // Solo hace el fetch si 'id' está presente
+      fetch(`http://localhost:3000/api/users/${id}`)
         .then((res) => res.json())
         .then((data) => {
           setUser(data.user); // Establece los datos del usuario
           setValue("phone", data.user.phone); // Establece los valores en el formulario
-          setValue("username", data.user.name); // Establece los valores en el formulario
+          setValue("username", data.user.username); // Establece los valores en el formulario
         })
         .catch((error) => {
           console.error("Error al obtener los datos del usuario:", error);
         });
     }
-  }, [id, user, setValue]);
+  }, [id, setValue]);
 
   const onSubmit = (data) => {
     // Enviar los cambios al backend
-    fetch(`/api/users/${id}`, {
+    fetch(`http://localhost:3000/api/users/${id}`, {
       method: "PUT",
       body: JSON.stringify({
+        username: data.username,
         phone: data.phone,
         password: data.password,
       }),
@@ -42,7 +41,7 @@ function EditUser({ params, datUser }) {
       },
     }).then((res) => {
       if (res.ok) {
-        router.push("/users"); // Redirige al listado de usuarios
+        router.push("http://localhost:3000/users"); // Redirige al listado de usuarios
       } else {
         console.log("Error al actualizar el usuario");
       }
