@@ -1,11 +1,20 @@
 import {GET} from "../api/cakes/route"
 import CakeCard from "../(components)/CakeCard"
+
 async function loadCakes() {
-    const cakes = await GET()
-    console.log('CAKES GATED',await GET());
-    return cakes
-    
+  try {
+    const response = await fetch('http://localhost:3000/api/cakes');
+    if (!response.ok) {
+      throw new Error('Failed to fetch cakes');
+    }
+    const cakes = await response.json();
+    console.log('Cakes fetched', cakes);
+    return cakes.cakes;
+  } catch (error) {
+    console.error('Error loading cakes:', error);
+    return []; // Retorna un array vacío en caso de error
   }
+}
   
   export const dynamic = 'force-dynamic'
   
