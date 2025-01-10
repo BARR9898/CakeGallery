@@ -45,7 +45,6 @@ export async function POST(request) {
             { status: 201 }
         );
     } catch (error) {
-        console.log(error);
         return new NextResponse(
             JSON.stringify({ message: error.message }),
             { status: 500 }
