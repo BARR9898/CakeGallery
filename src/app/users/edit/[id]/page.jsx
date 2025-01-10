@@ -5,31 +5,29 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import React from "react";
 
-function EditUser({ params,datUser }) {
-  const { id } = React.use(params); // Desempaqueta 'params' con React.use()
+function EditUser({ params, datUser }) {
+  const { id } = React.use(params); // Aquí desenvuelves params para acceder a sus propiedades
   const router = useRouter();
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(datUser || null); // Usa los datos de 'datUser' si están disponibles
   const { register, handleSubmit, setValue } = useForm();
 
-  console.log('datUser',datUser);
-  
+  console.log('datUser', datUser);
+
   useEffect(() => {
-    if (id) {
-      // Realiza la solicitud para obtener los datos del usuario por 'id'
+    if (id && !user) {
+      // Solo hace el fetch si 'id' está presente y 'user' aún no está cargado
       fetch(`/api/users/${id}`)
         .then((res) => res.json())
         .then((data) => {
-          
-          setUser(data.user);
-          setValue("phone", data.user.phone); // Establece el valor en el formulario
-          setValue("username", data.user.name); // Establece el valor en el formulario
-
+          setUser(data.user); // Establece los datos del usuario
+          setValue("phone", data.user.phone); // Establece los valores en el formulario
+          setValue("username", data.user.name); // Establece los valores en el formulario
         })
         .catch((error) => {
           console.error("Error al obtener los datos del usuario:", error);
         });
     }
-  }, [id]);
+  }, [id, user, setValue]);
 
   const onSubmit = (data) => {
     // Enviar los cambios al backend
@@ -51,7 +49,7 @@ function EditUser({ params,datUser }) {
     });
   };
 
-  if (!user) return <p>Cargando...</p>;
+  if (!user) return <p>Cargando...</p>; // Muestra "Cargando..." mientras se obtienen los datos
 
   return (
     <div className="h-[calc(100vh-7rem)] flex justify-center items-center">
@@ -65,7 +63,7 @@ function EditUser({ params,datUser }) {
 
         <label htmlFor="username" className="text-pink-900 mb-2 block text-sm">Username</label>
         <input
-          className="p-3 rounded block mb-2  w-full shadow"
+          className="p-3 rounded block mb-2 w-full shadow"
           type="text"
           {...register("username", { required: { value: true, message: "Username is required" } })}
           placeholder="username"
